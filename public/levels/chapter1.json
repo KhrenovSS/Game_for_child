@@ -1,0 +1,273 @@
+[
+  {
+    "id": "1-01",
+    "chapter": 1,
+    "title": "Два шага",
+    "grid": [
+      "....",
+      "S.G.",
+      "...."
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 6,
+    "par": 2,
+    "solution": [
+      "right",
+      "right"
+    ],
+    "say": "Дойди до флажка!",
+    "hint": "Нажми «вправо» два раза, потом ▶."
+  },
+  {
+    "id": "1-02",
+    "chapter": 1,
+    "title": "Наверх",
+    "grid": [
+      "..G.",
+      "....",
+      "..S."
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 6,
+    "par": 2,
+    "solution": [
+      "up",
+      "up"
+    ],
+    "say": "Флажок наверху!",
+    "hint": "Сколько шагов до флажка? Посчитай клеточки."
+  },
+  {
+    "id": "1-03",
+    "chapter": 1,
+    "title": "Налево",
+    "grid": [
+      "....",
+      "G..S",
+      "...."
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 7,
+    "par": 3,
+    "solution": [
+      "left",
+      "left",
+      "left"
+    ],
+    "say": "Теперь в другую сторону.",
+    "hint": "Три шага влево."
+  },
+  {
+    "id": "1-04",
+    "chapter": 1,
+    "title": "Уголок",
+    "grid": [
+      "...G",
+      "....",
+      "S..."
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 9,
+    "par": 5,
+    "solution": [
+      "right",
+      "right",
+      "right",
+      "up",
+      "up"
+    ],
+    "say": "Сначала вправо, потом вверх. Или наоборот!",
+    "hint": "Три шага вправо и два вверх."
+  },
+  {
+    "id": "1-05",
+    "chapter": 1,
+    "title": "Вниз и вправо",
+    "grid": [
+      "S...",
+      "....",
+      "..G."
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 8,
+    "par": 4,
+    "solution": [
+      "down",
+      "down",
+      "right",
+      "right"
+    ],
+    "say": "Я готов!",
+    "hint": "Два вниз, два вправо."
+  },
+  {
+    "id": "1-06",
+    "chapter": 1,
+    "title": "Камень",
+    "grid": [
+      ".....",
+      "S.#.G",
+      "....."
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 10,
+    "par": 6,
+    "solution": [
+      "right",
+      "down",
+      "right",
+      "right",
+      "up",
+      "right"
+    ],
+    "say": "Ой, на дороге камень!",
+    "hint": "Камень нужно обойти: сверху или снизу."
+  },
+  {
+    "id": "1-07",
+    "chapter": 1,
+    "title": "Забор",
+    "grid": [
+      "S....",
+      ".###.",
+      "....G"
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 10,
+    "par": 6,
+    "solution": [
+      "down",
+      "down",
+      "right",
+      "right",
+      "right",
+      "right"
+    ],
+    "say": "Длинный забор!",
+    "hint": "Обойди забор с одной стороны."
+  },
+  {
+    "id": "1-08",
+    "chapter": 1,
+    "title": "Обход",
+    "grid": [
+      "S#..",
+      ".#.#",
+      "...G"
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 9,
+    "par": 5,
+    "solution": [
+      "down",
+      "down",
+      "right",
+      "right",
+      "right"
+    ],
+    "say": "Справа стена. Куда же идти?",
+    "hint": "Спустись вниз, а потом иди вправо."
+  },
+  {
+    "id": "1-09",
+    "chapter": 1,
+    "title": "Змейка",
+    "grid": [
+      "S...#",
+      "###..",
+      "G...."
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 12,
+    "par": 8,
+    "solution": [
+      "right",
+      "right",
+      "right",
+      "down",
+      "down",
+      "left",
+      "left",
+      "left"
+    ],
+    "say": "Дорога идёт змейкой.",
+    "hint": "Вправо до конца, потом вниз, потом влево."
+  },
+  {
+    "id": "1-10",
+    "chapter": 1,
+    "title": "Большой луг",
+    "grid": [
+      "S....",
+      ".##.#",
+      ".#...",
+      ".#.#.",
+      "...#G"
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 14,
+    "par": 8,
+    "solution": [
+      "right",
+      "right",
+      "right",
+      "down",
+      "down",
+      "right",
+      "down",
+      "down"
+    ],
+    "say": "Тут много дорожек. Какая короче?",
+    "hint": "Есть длинный путь и короткий. Попробуй сначала вправо."
+  }
+]

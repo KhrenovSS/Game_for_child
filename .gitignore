@@ -1,0 +1,6 @@
+node_modules/
+data/progress.json
+data/*.tmp
+.DS_Store
+data/server.log
+data/*.json

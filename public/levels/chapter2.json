@@ -1,0 +1,315 @@
+[
+  {
+    "id": "2-01",
+    "chapter": 2,
+    "title": "Первая звезда",
+    "grid": [
+      ".....",
+      "S.*.G",
+      "....."
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 8,
+    "par": 4,
+    "solution": [
+      "right",
+      "right",
+      "right",
+      "right"
+    ],
+    "say": "Звезда прямо на дороге!",
+    "hint": "Пройди через звезду, она подберётся сама."
+  },
+  {
+    "id": "2-02",
+    "chapter": 2,
+    "title": "Звезда в стороне",
+    "grid": [
+      "S..G",
+      ".*..",
+      "...."
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 9,
+    "par": 5,
+    "solution": [
+      "down",
+      "right",
+      "up",
+      "right",
+      "right"
+    ],
+    "say": "Без звезды флажок не считается!",
+    "hint": "Сначала зайди за звездой, потом к флажку."
+  },
+  {
+    "id": "2-03",
+    "chapter": 2,
+    "title": "Две звезды",
+    "grid": [
+      "S.*.",
+      "....",
+      "*.G."
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 12,
+    "par": 8,
+    "solution": [
+      "right",
+      "right",
+      "left",
+      "left",
+      "down",
+      "down",
+      "right",
+      "right"
+    ],
+    "say": "Собери обе звезды.",
+    "hint": "Какую звезду взять первой? Подумай, чтобы не ходить лишнего."
+  },
+  {
+    "id": "2-04",
+    "chapter": 2,
+    "title": "Ключ и дверь",
+    "grid": [
+      "......",
+      "S.kD.G",
+      "......"
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 9,
+    "par": 5,
+    "solution": [
+      "right",
+      "right",
+      "right",
+      "right",
+      "right"
+    ],
+    "say": "Дверь заперта. Нужен ключ!",
+    "hint": "Ключ лежит прямо перед дверью. Просто иди вперёд."
+  },
+  {
+    "id": "2-05",
+    "chapter": 2,
+    "title": "Ключ в стороне",
+    "grid": [
+      "S..D.G",
+      ".k....",
+      "......"
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 11,
+    "par": 7,
+    "solution": [
+      "down",
+      "right",
+      "up",
+      "right",
+      "right",
+      "right",
+      "right"
+    ],
+    "say": "Где ключ?",
+    "hint": "Сначала спустись за ключом."
+  },
+  {
+    "id": "2-06",
+    "chapter": 2,
+    "title": "Лесная тропа",
+    "grid": [
+      "S.#..",
+      ".*#.*",
+      "....#",
+      "#.#..",
+      "..*.G"
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 20,
+    "par": 14,
+    "solution": [
+      "down",
+      "right",
+      "down",
+      "right",
+      "right",
+      "up",
+      "right",
+      "left",
+      "down",
+      "down",
+      "down",
+      "left",
+      "right",
+      "right"
+    ],
+    "say": "Три звезды в лесу.",
+    "hint": "Нарисуй пальцем путь по всем звёздам, а потом набери команды."
+  },
+  {
+    "id": "2-07",
+    "chapter": 2,
+    "title": "За дверью",
+    "grid": [
+      "S.k..",
+      "####D",
+      "G...."
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 14,
+    "par": 10,
+    "solution": [
+      "right",
+      "right",
+      "right",
+      "right",
+      "down",
+      "down",
+      "left",
+      "left",
+      "left",
+      "left"
+    ],
+    "say": "Флажок внизу, но стена!",
+    "hint": "Возьми ключ и иди к двери справа."
+  },
+  {
+    "id": "2-08",
+    "chapter": 2,
+    "title": "Какой путь короче?",
+    "grid": [
+      "S....",
+      ".###.",
+      ".#G#.",
+      ".#.#.",
+      "....."
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 14,
+    "par": 8,
+    "solution": [
+      "down",
+      "down",
+      "down",
+      "down",
+      "right",
+      "right",
+      "up",
+      "up"
+    ],
+    "say": "К флажку можно прийти только снизу.",
+    "hint": "Два пути: слева и справа. Посчитай, какой короче."
+  },
+  {
+    "id": "2-09",
+    "chapter": 2,
+    "title": "Три звезды",
+    "grid": [
+      "*...*",
+      "..S..",
+      "*....",
+      "..G.."
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 18,
+    "par": 12,
+    "solution": [
+      "right",
+      "right",
+      "up",
+      "left",
+      "left",
+      "left",
+      "left",
+      "down",
+      "down",
+      "right",
+      "right",
+      "down"
+    ],
+    "say": "Звёзды по углам!",
+    "hint": "Обойди звёзды по кругу, а флажок — в самом конце."
+  },
+  {
+    "id": "2-10",
+    "chapter": 2,
+    "title": "Тёмный лес",
+    "grid": [
+      "S.k...",
+      ".####.",
+      ".#....",
+      "D#####",
+      ".*...G"
+    ],
+    "commands": [
+      "up",
+      "down",
+      "left",
+      "right"
+    ],
+    "maxCommands": 18,
+    "par": 13,
+    "solution": [
+      "right",
+      "right",
+      "left",
+      "left",
+      "down",
+      "down",
+      "down",
+      "down",
+      "right",
+      "right",
+      "right",
+      "right",
+      "right"
+    ],
+    "say": "Самый тёмный лес. Ключ, дверь, звезда и флажок!",
+    "hint": "Ключ → дверь → звезда → флажок. По порядку."
+  }
+]

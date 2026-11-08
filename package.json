@@ -1,0 +1,16 @@
+{
+  "name": "putanik-game",
+  "version": "0.1.0",
+  "description": "Игра для обучения алгоритмическому мышлению (лабиринты с командами)",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "node --test tests/",
+    "check-levels": "node tools/check-levels.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "engines": { "node": ">=20" }
+}

@@ -1,0 +1,10 @@
+services:
+  game:
+    build: .
+    container_name: putanik
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+      - ./public:/app/public:ro
+    restart: unless-stopped

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Путаник — для родителя</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0 auto; padding: 24px; background: #f6f1e7; color: #2b2d42; max-width: 1100px; }
+    h1 { margin-top: 0; }
+    h2 { margin: 28px 0 8px; }
+    .row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin: 12px 0 18px; }
+    button, select { font: inherit; padding: 8px 14px; border-radius: 10px; border: 1px solid #bbb; background: #fff; cursor: pointer; }
+    button.danger { background: #ef476f; color: #fff; border-color: #ef476f; }
+    .cards { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+    .stat { background: #fff; padding: 12px 18px; border-radius: 12px; min-width: 150px; box-shadow: 0 2px 0 rgba(0,0,0,.08); }
+    .stat b { display: block; font-size: 26px; }
+    .skill { background: #fff; padding: 12px 16px; border-radius: 12px; min-width: 220px; box-shadow: 0 2px 0 rgba(0,0,0,.08); }
+    .bar { height: 12px; background: #eee; border-radius: 6px; overflow: hidden; margin: 6px 0 4px; }
+    .bar i { display: block; height: 100%; background: linear-gradient(90deg, #06d6a0, #ffd166, #ef476f); }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; margin-bottom: 18px; font-size: 15px; }
+    th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #e9e1d2; }
+    tr.bad { background: #fff0f3; }
+    tr.good td:first-child { font-weight: 700; }
+    .muted { color: #6d6a75; font-size: 14px; }
+    .types label { margin-right: 12px; white-space: nowrap; }
+    .note { background: #fff; border-left: 4px solid #06d6a0; padding: 10px 14px; border-radius: 8px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>🗺️ Путаник — страница родителя</h1>
+  <p class="muted"><a href="/">Открыть игру</a>. Прогресс хранится в <code>data/progress.json</code>.</p>
+
+  <div class="cards">
+    <div class="stat"><b id="s-levels">–</b>уровней пройдено</div>
+    <div class="stat"><b id="s-time">–</b>среднее время (последние 10)</div>
+    <div class="stat"><b id="s-math">–</b>примеров верно с 1-го раза</div>
+    <div class="stat"><b id="s-today">–</b>сыграно сегодня</div>
+  </div>
+  <div id="summary" class="note"></div>
+
+  <h2>Сложность по навыкам</h2>
+  <p class="muted">Шкала 1–20. Игра повышает сложность, когда Саша решает быстрее целевого времени, и понижает, когда долго или с ошибками.</p>
+  <div class="cards" id="skills"></div>
+
+  <h2>Настройки</h2>
+  <div class="row">
+    <label>Герой: <select id="hero"></select></label>
+    <label>Целевое время на уровень:
+      <select id="target"><option value="60">1 мин</option><option value="90">1,5 мин</option><option value="120">2 мин</option><option value="180">3 мин</option></select>
+    </label>
+    <label><input type="checkbox" id="voice"> Озвучка</label>
+    <label><input type="checkbox" id="math"> Пример перед уровнем</label>
+    <label><input type="checkbox" id="unlock"> Открыть все уровни</label>
+  </div>
+  <div class="row types" id="types"></div>
+  <div class="row">
+    <button id="reload">Обновить</button>
+    <button id="resetSkills">Сбросить сложность</button>
+    <button class="danger" id="reset">Сбросить весь прогресс</button>
+  </div>
+
+  <h2>Последние уровни</h2>
+  <table id="hist"></table>
+  <h2>Математика <small class="muted" id="mathLevel"></small></h2>
+  <table id="mathHist"></table>
+  <h2>Сюжетные уровни</h2>
+  <div id="tables"></div>
+
+  <script type="module">
+    import { MATH_TYPES } from '/js/engine/math.js';
+    const $ = (s) => document.querySelector(s);
+    const story = await (await fetch('/levels/story.json', { cache: 'no-store' })).json();
+    const levels = (await Promise.all(story.chapters.map((c) => fetch(`/levels/chapter${c.id}.json`, { cache: 'no-store' }).then((r) => r.json())))).flat();
+    const SKILL = { seq: 'Шаги (Луг)', plan: 'Планирование (Лес)', fix: 'Поиск ошибок (Мастерская)', loop: 'Циклы (Горы)' };
+    const OUT = { success: '✅ прошёл', abandon: '🚪 бросил', skip: '🎲 сменил', wall: 'упёрся', notThere: 'не дошёл', starsLeft: 'не собрал звёзды' };
+    const fmt = (iso) => (iso ? new Date(iso).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—');
+    const mmss = (s) => (s == null ? '—' : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`);
+    const word = (d) => (d < 4 ? 'очень легко' : d < 8 ? 'легко' : d < 12 ? 'средне' : d < 16 ? 'трудно' : 'очень трудно');
+    let p = null;
+
+    async function load() { p = await (await fetch('/api/progress', { cache: 'no-store' })).json(); render(); }
+    async function patch(data) {
+      p = await (await fetch('/api/progress', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })).json();
+      render();
+    }
+    const settings = () => ({ targetSeconds: 90, math: true, ...(p.settings || {}) });
+
+    function render() {
+      const s = settings();
+      const hist = (p.history || []).slice().reverse();
+      const succ = hist.filter((h) => h.outcome === 'success');
+      const handDone = levels.filter((l) => p.levels?.[l.id]?.stars > 0).length;
+      $('#s-levels').textContent = `${handDone + (p.history || []).filter((h) => h.outcome === 'success' && h.generated).length}`;
+      const last10 = succ.slice(0, 10);
+      $('#s-time').textContent = last10.length ? mmss(Math.round(last10.reduce((a, h) => a + (h.activeSec || 0), 0) / last10.length)) : '—';
+      const mh = (p.math?.history || []).slice().reverse();
+      const m20 = mh.slice(0, 20);
+      $('#s-math').textContent = m20.length ? `${Math.round(100 * m20.filter((m) => m.wrong === 0).length / m20.length)}%` : '—';
+      const today = new Date().toDateString();
+      const todayH = (p.history || []).filter((h) => new Date(h.at).toDateString() === today);
+      $('#s-today').textContent = `${todayH.filter((h) => h.outcome === 'success').length} ур. / ${mmss(todayH.reduce((a, h) => a + (h.activeSec || 0), 0))}`;
+
+      // Краткий вывод
+      const t = s.targetSeconds;
+      let sum = 'Пока мало данных: нужно пройти несколько уровней после обновления.';
+      if (last10.length >= 3) {
+        const avg = last10.reduce((a, h) => a + h.activeSec, 0) / last10.length;
+        const fails = last10.reduce((a, h) => a + (h.fails || 0), 0) / last10.length;
+        if (avg < t * 0.6 && fails < 1) sum = `Уровни сейчас даются легко (в среднем ${mmss(Math.round(avg))} при цели ${mmss(t)}). Игра продолжает повышать сложность.`;
+        else if (avg > t * 1.5 || fails >= 3) sum = `Сейчас трудно (в среднем ${mmss(Math.round(avg))}, ошибок ${fails.toFixed(1)} на уровень). Игра снижает сложность; можно посидеть рядом и пройти уровень «по шагам» ⏭.`;
+        else sum = `Сложность подобрана хорошо: в среднем ${mmss(Math.round(avg))} на уровень при цели ${mmss(t)}.`;
+      }
+      $('#summary').textContent = sum;
+
+      const sk = $('#skills'); sk.innerHTML = '';
+      for (const ch of story.chapters) {
+        const d = p.skills?.[ch.skill];
+        const n = (p.history || []).filter((h) => h.skill === ch.skill && h.outcome === 'success').length;
+        const el = document.createElement('div'); el.className = 'skill';
+        el.innerHTML = `<b>${ch.emoji} ${SKILL[ch.skill]}</b><div class="bar"><i style="width:${d ? (d / 20) * 100 : 0}%"></i></div>${d != null ? `${d} — ${word(d)}` : 'ещё не играл'} <span class="muted">· пройдено ${n}</span>${p.skills?.[ch.skill + 'Struggle'] ? '<br><span class="muted">⚠ недавно было трудно</span>' : ''}`;
+        sk.appendChild(el);
+      }
+
+      $('#hero').innerHTML = story.heroes.map((h) => `<option value="${h.id}" ${h.id === p.hero ? 'selected' : ''}>${h.emoji} ${h.name}</option>`).join('');
+      $('#target').value = String(s.targetSeconds);
+      $('#voice').checked = p.voice !== false;
+      $('#math').checked = s.math !== false;
+      $('#unlock').checked = Boolean(p.unlockAll);
+      const enabled = s.mathTypes || Object.keys(MATH_TYPES);
+      $('#types').innerHTML = '<b>Виды заданий:</b> ' + Object.entries(MATH_TYPES).map(([id, tt]) => `<label><input type="checkbox" data-type="${id}" ${enabled.includes(id) ? 'checked' : ''}> ${tt.title} <span class="muted">(ур. ${tt.min}+)</span></label>`).join('');
+      $('#types').querySelectorAll('input').forEach((cb) => cb.addEventListener('change', () => {
+        const list = [...$('#types').querySelectorAll('input:checked')].map((x) => x.dataset.type);
+        patch({ settings: { ...settings(), mathTypes: list } });
+      }));
+
+      $('#hist').innerHTML = '<tr><th>Когда</th><th>Навык</th><th>Уровень</th><th>Сложность</th><th>Время</th><th>Неудач</th><th>Подсказок</th><th>Карточек / par</th><th>Итог</th></tr>' +
+        hist.slice(0, 30).map((h) => `<tr class="${h.outcome === 'success' ? (h.fails <= 1 ? 'good' : '') : 'bad'}"><td>${fmt(h.at)}</td><td>${SKILL[h.skill] || h.skill}</td><td>${h.title || h.id}${h.generated ? ' 🎲' : ''}${h.practice ? ' (тренировка)' : ''}${h.replay ? ' (повтор)' : ''}</td><td>${h.D ?? '—'}${h.newD != null ? ` → ${h.newD}` : ''}</td><td>${mmss(h.activeSec)}</td><td>${h.fails ?? 0}</td><td>${h.hints ?? 0}</td><td>${h.cards ?? '—'} / ${h.par ?? '—'}</td><td>${OUT[h.outcome] || h.outcome}${h.stars ? ' ' + '⭐'.repeat(h.stars) : ''}</td></tr>`).join('');
+
+      $('#mathLevel').textContent = p.math ? `уровень ${p.math.level} из 5` : '';
+      $('#mathHist').innerHTML = '<tr><th>Когда</th><th>Вид</th><th>Задание</th><th>Ответ</th><th>Ошибок</th><th>Время</th></tr>' +
+        mh.slice(0, 20).map((m) => `<tr class="${m.wrong ? 'bad' : 'good'}"><td>${fmt(m.at)}</td><td>${MATH_TYPES[m.type]?.title || m.type}</td><td>${m.expr}</td><td>${m.answer}</td><td>${m.wrong}${m.gaveUp ? ' (показали ответ)' : ''}</td><td>${m.seconds} с</td></tr>`).join('');
+
+      const tables = $('#tables'); tables.innerHTML = '';
+      for (const ch of story.chapters) {
+        const t2 = document.createElement('table');
+        t2.innerHTML = `<tr><th colspan="5">${ch.emoji} Глава ${ch.id}. ${ch.title}</th></tr><tr><th>Уровень</th><th>Название</th><th>Звёзды</th><th>Попыток</th><th>Когда</th></tr>` +
+          levels.filter((l) => l.chapter === ch.id).map((l) => { const r = p.levels?.[l.id]; return `<tr class="${r?.stars ? 'good' : r?.attempts >= 5 ? 'bad' : ''}"><td>${l.id}${l.id === ch.bossLevel ? ' 🌀' : ch.introLevels.includes(l.id) ? ' (ввод)' : ''}</td><td>${l.title}</td><td>${r?.stars ? '⭐'.repeat(r.stars) : ''}</td><td>${r?.attempts || 0}</td><td>${fmt(r?.lastAt)}</td></tr>`; }).join('');
+        tables.appendChild(t2);
+      }
+    }
+
+    $('#hero').addEventListener('change', (e) => patch({ hero: e.target.value }));
+    $('#target').addEventListener('change', (e) => patch({ settings: { ...settings(), targetSeconds: Number(e.target.value) } }));
+    $('#voice').addEventListener('change', (e) => patch({ voice: e.target.checked }));
+    $('#math').addEventListener('change', (e) => patch({ settings: { ...settings(), math: e.target.checked } }));
+    $('#unlock').addEventListener('change', (e) => patch({ unlockAll: e.target.checked }));
+    $('#reload').addEventListener('click', load);
+    $('#resetSkills').addEventListener('click', () => { if (confirm('Сбросить сложность? Игра заново начнёт подбирать уровни с лёгких.')) patch({ skills: {} }); });
+    $('#reset').addEventListener('click', async () => {
+      if (!confirm('Точно сбросить весь прогресс Саши? Это нельзя отменить.')) return;
+      await fetch('/api/progress/reset', { method: 'POST' });
+      await load();
+    });
+    await load();
+  </script>
+</body>
+</html>
